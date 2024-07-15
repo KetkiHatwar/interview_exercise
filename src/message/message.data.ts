@@ -362,4 +362,39 @@ export class MessageData {
 
     return chatMessageToObject(updatedResult);
   }
+
+  async addTag(messageId: ObjectID, tag: string): Promise<ChatMessage> {
+    const query = { _id: messageId };
+    const update = { $addToSet: { tags: tag } };
+    const Result = await this.chatMessageModel.findOneAndUpdate(
+      query,
+      update,
+      {
+        new: true,
+        returnOriginal: false,
+      },
+    );
+    if (!Result) throw new Error('Failed to add tag');
+    return chatMessageToObject(Result);
+  }
+
+  async getMessagesByTag(tag: string): Promise<ChatMessage[]> {
+    const chatMessages = await this.chatMessageModel.find({ tags: tag });
+    return chatMessages.map((chatMessage) => chatMessageToObject(chatMessage));
+  }
+
+  async removeTag(messageId: ObjectID, tag: string): Promise<ChatMessage> {
+    const query = { _id: messageId };
+    const update = { $pull: { tags: tag } };
+    const Result = await this.chatMessageModel.findOneAndUpdate(
+      query,
+      update,
+      {
+        new: true,
+        returnOriginal: false,
+      },
+    );
+    if (!Result) throw new Error('Failed to remove tag');
+    return chatMessageToObject(Result);
+  }
 }
