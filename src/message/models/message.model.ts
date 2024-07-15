@@ -145,6 +145,12 @@ export class ChatMessageModel {
   @Prop()
   likes: Array<ObjectID>;
 
+  @Prop({
+    type: [String], // Add the tags field
+    default: [],
+  })
+  tags?: string[];
+
   @Prop({ type: RichMessageContent })
   richContent?: RichMessageContent;
 
